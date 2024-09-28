@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <!-- Top Bar -->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spnMainCitySelect"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_spinner_cities"
+            android:layoutDirection="ltr"
+            android:paddingHorizontal="8dp"
+            android:textDirection="ltr" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnMainCitySearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_button_search"
+            android:text="Search"
+            android:textColor="@color/colorAccent" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <!-- Weather Forecast List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMainForecastData"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        tools:listitem="@layout/forecast_item" />
+
+    <!-- Error Message (if needed) -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMainForecastError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Error fetching data, please retry."
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnMainForecastRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_button_search"
+        android:text="Retry"
+        android:textColor="@color/colorAccent"
+        android:visibility="gone" />
+</androidx.appcompat.widget.LinearLayoutCompat>
