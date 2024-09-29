@@ -1,4 +1,4 @@
-package com.balsha.forecasttask
+package com.balsha.forecasttask.presentation
 
 import android.os.Bundle
 import android.view.View
@@ -8,15 +8,13 @@ import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import com.balsha.forecasttask.R
+import com.balsha.forecasttask.data.model.city.CitiesResponse
+import com.balsha.forecasttask.data.model.city.CityModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +22,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var spnMainCitySelect: Spinner
     private lateinit var btnMainCitySearch: Button
-    private var citiesResponse = CitiesResponse()
+
+    private val mainViewModel: MainViewModel by viewModels()
+
     private var selectedCity = CityModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,33 +41,16 @@ class MainActivity : AppCompatActivity() {
         spnMainCitySelect = findViewById(R.id.spnMainCitySelect)
         btnMainCitySearch = findViewById(R.id.btnMainCitySearch)
 
-        // Fetch cities from JSON file
-        fetchCities()
-
-        // Set up spinner and button
-        setupSpinner()
+        observeGetCities()
     }
 
-    // Sample method to get a list of cities
-    private fun fetchCities() {
-        Thread {
-            try {
-                val url = URL("https://dev-orcas.s3.eu-west-1.amazonaws.com/uploads/cities.json")
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-
-                val reader = InputStreamReader(connection.inputStream)
-                citiesResponse =
-                    Gson().fromJson(reader, object : TypeToken<CitiesResponse>() {}.type)
-                reader.close()
-                runOnUiThread(mContext::setupSpinner) // Update UI on the main thread
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }.start()
+    private fun observeGetCities() {
+        mainViewModel.citiesResponse.observe(mContext) { response ->
+            setupSpinner(response)
+        }
     }
 
-    private fun setupSpinner() {
+    private fun setupSpinner(citiesResponse: CitiesResponse) {
         val citiesName = arrayListOf("Select city")
         citiesName.addAll(citiesResponse.cities.map { city -> "${city.id} -> ${city.cityNameAr} | ${city.cityNameEn}" })
         val adapter = ArrayAdapter(mContext, android.R.layout.simple_spinner_item, citiesName)
