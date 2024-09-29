@@ -52,7 +52,7 @@ object RetrofitModule {
         val retrofit: Retrofit = Retrofit.Builder()
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://tazaker.backend.aait-d.com/api/")
+            .baseUrl("")
             .build()
         return retrofit
     }

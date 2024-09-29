@@ -1,11 +1,6 @@
 package com.balsha.forecasttask.presentation
 
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -15,76 +10,73 @@ import androidx.core.view.WindowInsetsCompat
 import com.balsha.forecasttask.R
 import com.balsha.forecasttask.data.model.city.CitiesResponse
 import com.balsha.forecasttask.data.model.city.CityModel
+import com.balsha.forecasttask.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private val mContext by lazy { this@MainActivity }
 
-    private lateinit var spnMainCitySelect: Spinner
-    private lateinit var btnMainCitySearch: Button
+    private lateinit var mBinding: ActivityMainBinding
 
-    private val mainViewModel: MainViewModel by viewModels()
+    private val mMainViewModel: MainViewModel by viewModels()
 
-    private var selectedCity = CityModel()
+    private val mCitiesAdapter by lazy { CitiesAdapter(mContext) }
+
+    private var mSelectedCity = CityModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+
+        mBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Initialize views
-        spnMainCitySelect = findViewById(R.id.spnMainCitySelect)
-        btnMainCitySearch = findViewById(R.id.btnMainCitySearch)
+        mBinding.spnMainCitySelect.adapter = mCitiesAdapter
 
         observeGetCities()
     }
 
     private fun observeGetCities() {
-        mainViewModel.citiesResponse.observe(mContext) { response ->
+        mMainViewModel.citiesResponse.observe(mContext) { response ->
             setupSpinner(response)
         }
     }
 
     private fun setupSpinner(citiesResponse: CitiesResponse) {
-        val citiesName = arrayListOf("Select city")
-        citiesName.addAll(citiesResponse.cities.map { city -> "${city.id} -> ${city.cityNameAr} | ${city.cityNameEn}" })
-        val adapter = ArrayAdapter(mContext, android.R.layout.simple_spinner_item, citiesName)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spnMainCitySelect.setAdapter(adapter)
+        val citiesName = arrayListOf(
+            CityModel(
+                id = -1, cityNameAr = "اختر مدينة", cityNameEn = "Select city", lat = 0.0, lon = 0.0
+            )
+        )
+        citiesName.addAll(citiesResponse.cities)
 
-        spnMainCitySelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>, view: View, position: Int, id: Long
-            ) {
+        mCitiesAdapter.setItems(citiesName)
+
+        mCitiesAdapter.setOnCitySelectedListener(object : CitiesAdapter.IOnCitySelected {
+            override fun setOnCitySelected(position: Int) {
                 if (position != 0) {
-                    val selectedItem = parent.getItemAtPosition(position).toString()
-                    val cityId = selectedItem.split("->").first().trim().toInt()
-                    selectedCity =
-                        citiesResponse.cities.find { city -> city.id == cityId } ?: CityModel()
+                    mSelectedCity = citiesName[position]
+                    mBinding.spnMainCitySelect.setSelection(position)
+
                     Toast.makeText(
-                        mContext,
-                        "Selected city: ${selectedCity.lat}",
-                        Toast.LENGTH_SHORT
+                        mContext, "Selected city: ${mSelectedCity.lat}", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
+        })
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        btnMainCitySearch.setOnClickListener {
-            val city: String = spnMainCitySelect.getSelectedItem().toString()
-            fetchWeatherData(city)
+        mBinding.btnMainCitySearch.setOnClickListener {
+            fetchWeatherData(mSelectedCity)
         }
     }
 
-    // Method to fetch weather data (implementation will vary)
-    private fun fetchWeatherData(city: String) {
+    private fun fetchWeatherData(city: CityModel) {
         // TODO: Implement your API call to fetch weather data for the selected city
         Toast.makeText(mContext, "Fetching weather data for: $city", Toast.LENGTH_SHORT).show()
     }
