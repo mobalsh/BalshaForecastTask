@@ -8,23 +8,30 @@
     android:orientation="vertical"
     tools:context=".presentation.MainActivity">
 
-    <!-- Top Bar -->
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linMainCitySelect"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingHorizontal="8dp">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/spnMainCitySelect"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvMainCitySelect"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/bg_spinner_cities"
+            android:drawableEnd="@drawable/ic_arrow_drop_down"
+            android:gravity="center_vertical|start"
             android:layoutDirection="ltr"
             android:paddingHorizontal="8dp"
-            android:textDirection="ltr" />
+            android:text="@string/select_city"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textDirection="ltr"
+            android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnMainCitySearch"
@@ -32,11 +39,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="@drawable/bg_button_search"
-            android:text="Search"
+            android:text="@string/search"
             android:textColor="@color/colorAccent" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <!-- Weather Forecast List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMainForecastData"
         android:layout_width="match_parent"
@@ -48,14 +54,13 @@
         app:spanCount="2"
         tools:listitem="@layout/forecast_item" />
 
-    <!-- Error Message (if needed) -->
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvMainForecastError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Error fetching data, please retry."
+        android:text="@string/error_fetching_data_please_retry"
         android:textColor="@android:color/holo_red_dark"
         android:visibility="gone" />
 
@@ -65,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/bg_button_search"
-        android:text="Retry"
+        android:text="@string/retry"
         android:textColor="@color/colorAccent"
         android:visibility="gone" />
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -21,12 +23,45 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    val properties = Properties()
+    properties.load(project.rootProject.file("local.properties").inputStream())
+
+    project.logger.lifecycle("Props: $properties")
+
+    signingConfigs {
+        create("release") {
+            project.logger.lifecycle("Release: ${properties["RELEASE_KEY_STORE"]}")
+            storeFile = file(path = "${properties["RELEASE_STORE_PATH"]}")
+            storePassword = "${properties["RELEASE_STORE_PASSWORD"]}"
+            keyAlias = "${properties["RELEASE_KEY_ALIAS"]}"
+            keyPassword = "${properties["RELEASE_KEY_PASSWORD"]}"
+        }
+    }
+
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            isDebuggable = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
+
+            buildConfigField("String", "BASE_URL", "\"${properties["DEBUG_BASE_URL"]}\"")
+            buildConfigField("String", "APP_ID", "\"${properties["APP_ID"]}\"")
+
+            signingConfig = signingConfigs["debug"]
+        }
+        release {
+            isMinifyEnabled = false
+            isDebuggable = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+
+            buildConfigField("String", "BASE_URL", "\"${properties["RELEASE_BASE_URL"]}\"")
+            buildConfigField("String", "APP_ID", "\"${properties["APP_ID"]}\"")
+
+            signingConfig = signingConfigs["release"]
         }
     }
 
@@ -37,7 +72,10 @@ android {
 
     kotlinOptions { jvmTarget = "1.8" }
 
-    buildFeatures { viewBinding = true }
+    buildFeatures {
+        buildConfig = true
+        viewBinding = true
+    }
 }
 
 dependencies {

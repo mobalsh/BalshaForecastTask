@@ -11,7 +11,10 @@ import com.balsha.forecasttask.R
 import com.balsha.forecasttask.data.model.city.CitiesResponse
 import com.balsha.forecasttask.data.model.city.CityModel
 import com.balsha.forecasttask.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val mContext by lazy { this@MainActivity }
@@ -20,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private val mMainViewModel: MainViewModel by viewModels()
 
-    private val mCitiesAdapter by lazy { CitiesAdapter(mContext) }
+    private var mCitiesDialog: SelectCityDialog? = null
 
     private var mSelectedCity = CityModel()
 
@@ -37,14 +40,29 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        mBinding.spnMainCitySelect.adapter = mCitiesAdapter
+        mCitiesDialog = SelectCityDialog(mContext)
 
         observeGetCities()
+        observeGetForecast()
     }
 
     private fun observeGetCities() {
         mMainViewModel.citiesResponse.observe(mContext) { response ->
             setupSpinner(response)
+        }
+    }
+
+    private fun observeGetForecast() {
+        mMainViewModel.forecastResponse.observe(mContext) { response ->
+            Toast.makeText(
+                mContext, "Visibility: ${response.list.first().visibility}", Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        mMainViewModel.forecastError.observe(mContext) { response ->
+            Toast.makeText(
+                mContext, "Forecast Error: ${response.message}", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -56,20 +74,21 @@ class MainActivity : AppCompatActivity() {
         )
         citiesName.addAll(citiesResponse.cities)
 
-        mCitiesAdapter.setItems(citiesName)
+        if (mCitiesDialog != null) {
+            mCitiesDialog?.setItems(citiesName)
 
-        mCitiesAdapter.setOnCitySelectedListener(object : CitiesAdapter.IOnCitySelected {
-            override fun setOnCitySelected(position: Int) {
-                if (position != 0) {
+            mCitiesDialog?.setOnCitySelectedListener(object : CitiesAdapter.IOnCitySelected {
+                override fun setOnCitySelected(position: Int) {
                     mSelectedCity = citiesName[position]
-                    mBinding.spnMainCitySelect.setSelection(position)
 
-                    Toast.makeText(
-                        mContext, "Selected city: ${mSelectedCity.lat}", Toast.LENGTH_SHORT
-                    ).show()
+                    val lang = Locale.getDefault().language
+                    mBinding.tvMainCitySelect.text =
+                        if (lang == "en") mSelectedCity.cityNameEn else mSelectedCity.cityNameAr
                 }
-            }
-        })
+            })
+
+            mBinding.tvMainCitySelect.setOnClickListener { mCitiesDialog?.show() }
+        }
 
         mBinding.btnMainCitySearch.setOnClickListener {
             fetchWeatherData(mSelectedCity)
@@ -77,7 +96,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchWeatherData(city: CityModel) {
-        // TODO: Implement your API call to fetch weather data for the selected city
-        Toast.makeText(mContext, "Fetching weather data for: $city", Toast.LENGTH_SHORT).show()
+        mMainViewModel.getForecast(city.lat, city.lon)
     }
 }

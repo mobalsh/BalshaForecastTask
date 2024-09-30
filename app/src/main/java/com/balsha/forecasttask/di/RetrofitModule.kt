@@ -1,5 +1,6 @@
 package com.balsha.forecasttask.di
 
+import com.balsha.forecasttask.BuildConfig
 import com.balsha.forecasttask.api.ApiService
 import dagger.Module
 import dagger.Provides
@@ -52,7 +53,7 @@ object RetrofitModule {
         val retrofit: Retrofit = Retrofit.Builder()
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("")
+            .baseUrl(BuildConfig.BASE_URL)
             .build()
         return retrofit
     }

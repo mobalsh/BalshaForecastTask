@@ -4,9 +4,9 @@ import com.balsha.forecasttask.api.ApiService
 import com.balsha.forecasttask.data.model.forecast.ForecastResponse
 
 interface MainRepository {
-    suspend fun getForecast(): ForecastResponse
+    suspend fun getForecast(lat: Double, lon: Double): ForecastResponse
 }
 
 class MainRepositoryImpl(private val apiService: ApiService) : MainRepository {
-    override suspend fun getForecast() = apiService.getForecast()
+    override suspend fun getForecast(lat: Double, lon: Double) = apiService.getForecast(lat, lon)
 }

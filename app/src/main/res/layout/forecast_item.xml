@@ -18,7 +18,7 @@
             android:id="@+id/tvForecastItemDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"
+            android:text="@string/date"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -33,7 +33,7 @@
             android:id="@+id/tvForecastItemTemp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="High/Low: 25/15°C"
+            android:text="@string/high_low_25_15_c"
             android:textSize="16sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.cardview.widget.CardView>
