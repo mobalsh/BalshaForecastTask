@@ -1,17 +1,24 @@
 package com.balsha.forecasttask.data.model.forecast
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Main(
     val temp: Float,
-    val feels_like: Float,
-    val temp_min: Float,
-    val temp_max: Float,
+    @SerializedName("feels_like")
+    val feelsLike: Float,
+    @SerializedName("temp_min")
+    val tempMin: Float,
+    @SerializedName("temp_max")
+    val tempMax: Float,
     val pressure: Float,
-    val sea_level: Float,
-    val grnd_level: Float,
+    @SerializedName("sea_level")
+    val seaLevel: Float,
+    @SerializedName("grnd_level")
+    val grandLevel: Float,
     val humidity: Float,
-    val temp_kf: Float
+    @SerializedName("temp_kf")
+    val tempKF: Float
 ) : Parcelable

@@ -1,4 +1,4 @@
-package com.balsha.forecasttask.presentation
+package com.balsha.forecasttask.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +36,6 @@ class CitiesAdapter : RecyclerView.Adapter<CitiesAdapter.CitiesViewHolder>() {
         val binding = CitiesItemBinding.bind(holder.itemView)
         val context = binding.root.context
         val city = mCitiesList[position]
-
         val lang = Locale.getDefault().language
 
         binding.tvCitiesItemName.text = if (lang == "en") city.cityNameEn else city.cityNameAr

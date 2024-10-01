@@ -11,6 +11,11 @@ import com.balsha.forecasttask.R
 import com.balsha.forecasttask.data.model.city.CitiesResponse
 import com.balsha.forecasttask.data.model.city.CityModel
 import com.balsha.forecasttask.databinding.ActivityMainBinding
+import com.balsha.forecasttask.presentation.adapters.CitiesAdapter
+import com.balsha.forecasttask.presentation.adapters.ForecastsAdapter
+import com.balsha.forecasttask.presentation.viewModel.CitiesDataState
+import com.balsha.forecasttask.presentation.viewModel.ForecastsDataState
+import com.balsha.forecasttask.presentation.viewModel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -47,22 +52,53 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeGetCities() {
-        mMainViewModel.citiesResponse.observe(mContext) { response ->
-            setupSpinner(response)
+        mMainViewModel.citiesState.observe(mContext) { response ->
+            when (response) {
+                is CitiesDataState.Loading -> {
+                }
+
+                is CitiesDataState.Success -> {
+                    setupSpinner(response.data)
+                }
+
+                is CitiesDataState.Cached -> {
+                }
+
+                is CitiesDataState.Error -> {
+                    Toast.makeText(
+                        mContext, "Forecast Error: ${response.message}", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 
     private fun observeGetForecast() {
-        mMainViewModel.forecastResponse.observe(mContext) { response ->
-            Toast.makeText(
-                mContext, "Visibility: ${response.list.first().visibility}", Toast.LENGTH_SHORT
-            ).show()
-        }
+        mMainViewModel.forecastState.observe(mContext) { response ->
+            when (response) {
+                is ForecastsDataState.Loading -> {
+                }
 
-        mMainViewModel.forecastError.observe(mContext) { response ->
-            Toast.makeText(
-                mContext, "Forecast Error: ${response.message}", Toast.LENGTH_SHORT
-            ).show()
+                is ForecastsDataState.Success -> {
+                    val forecasts = response.data.list
+                    val adapter = ForecastsAdapter()
+                    adapter.setItems(forecasts)
+                    mBinding.rvMainForecastData.adapter = adapter
+                }
+
+                is ForecastsDataState.Cached -> {
+                    val forecasts = response.data
+                    val adapter = ForecastsAdapter()
+                    adapter.setItems(forecasts)
+                    mBinding.rvMainForecastData.adapter = adapter
+                }
+
+                is ForecastsDataState.Error -> {
+                    Toast.makeText(
+                        mContext, "Forecast Error: ${response.message}", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 

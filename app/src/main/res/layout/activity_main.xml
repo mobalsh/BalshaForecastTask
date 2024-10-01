@@ -52,7 +52,7 @@
         android:padding="8dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
-        tools:listitem="@layout/forecast_item" />
+        tools:listitem="@layout/forecasts_item" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvMainForecastError"

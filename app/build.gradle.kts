@@ -47,6 +47,7 @@ android {
             )
 
             buildConfigField("String", "BASE_URL", "\"${properties["DEBUG_BASE_URL"]}\"")
+            buildConfigField("String", "IMAGES_URL", "\"${properties["DEBUG_IMAGES_URL"]}\"")
             buildConfigField("String", "APP_ID", "\"${properties["APP_ID"]}\"")
 
             signingConfig = signingConfigs["debug"]
@@ -59,6 +60,7 @@ android {
             )
 
             buildConfigField("String", "BASE_URL", "\"${properties["RELEASE_BASE_URL"]}\"")
+            buildConfigField("String", "IMAGES_URL", "\"${properties["RELEASE_IMAGES_URL"]}\"")
             buildConfigField("String", "APP_ID", "\"${properties["APP_ID"]}\"")
 
             signingConfig = signingConfigs["release"]
@@ -100,4 +102,14 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+
+    //Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
+
+    //Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    // Optional for Kotlin coroutines support
+    implementation("androidx.room:room-ktx:2.6.1")
 }

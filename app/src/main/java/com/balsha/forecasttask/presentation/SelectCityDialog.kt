@@ -13,7 +13,8 @@ import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.balsha.forecasttask.R
 import com.balsha.forecasttask.data.model.city.CityModel
-import com.balsha.forecasttask.presentation.CitiesAdapter.IOnCitySelected
+import com.balsha.forecasttask.presentation.adapters.CitiesAdapter
+import com.balsha.forecasttask.presentation.adapters.CitiesAdapter.IOnCitySelected
 
 class SelectCityDialog(context: Context) : Dialog(context), IOnCitySelected {
 
