@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt)
 
+    id("com.google.devtools.ksp")
+
     kotlin("kapt")
     kotlin("plugin.parcelize")
 }
@@ -104,12 +106,11 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     //Glide
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    implementation(libs.glide.library)
+    kapt(libs.glide.compiler)
 
     //Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    // Optional for Kotlin coroutines support
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }
