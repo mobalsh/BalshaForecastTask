@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cvForecastsItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -15,7 +16,7 @@
         android:padding="16dp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvForecastItemDate"
+            android:id="@+id/tvForecastsItemDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/date"
@@ -23,17 +24,17 @@
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivForecastItemIcon"
+            android:id="@+id/ivForecastsItemIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:src="@mipmap/ic_launcher" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvForecastItemTemp"
+            android:id="@+id/tvForecastsItemTemp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/high_low_25_15_c"
+            android:text="@string/high_low"
             android:textSize="16sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.cardview.widget.CardView>

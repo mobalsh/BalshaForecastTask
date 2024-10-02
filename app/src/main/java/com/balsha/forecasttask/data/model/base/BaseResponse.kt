@@ -8,7 +8,5 @@ import kotlinx.parcelize.Parcelize
 @Keep
 open class BaseResponse(
     val cod: Int = -1,
-    val code: Int = -1,
-    val status: String = "",
     val message: String = ""
 ) : Parcelable

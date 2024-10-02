@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt)
 
+    id("com.google.devtools.ksp")
+
     kotlin("kapt")
     kotlin("plugin.parcelize")
 }
@@ -47,6 +49,7 @@ android {
             )
 
             buildConfigField("String", "BASE_URL", "\"${properties["DEBUG_BASE_URL"]}\"")
+            buildConfigField("String", "IMAGES_URL", "\"${properties["DEBUG_IMAGES_URL"]}\"")
             buildConfigField("String", "APP_ID", "\"${properties["APP_ID"]}\"")
 
             signingConfig = signingConfigs["debug"]
@@ -59,6 +62,7 @@ android {
             )
 
             buildConfigField("String", "BASE_URL", "\"${properties["RELEASE_BASE_URL"]}\"")
+            buildConfigField("String", "IMAGES_URL", "\"${properties["RELEASE_IMAGES_URL"]}\"")
             buildConfigField("String", "APP_ID", "\"${properties["APP_ID"]}\"")
 
             signingConfig = signingConfigs["release"]
@@ -100,4 +104,24 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+
+    //Glide
+    implementation(libs.glide.library)
+    kapt(libs.glide.compiler)
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    //Unit Testing
+    testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    //UI Testing
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.rules)
 }

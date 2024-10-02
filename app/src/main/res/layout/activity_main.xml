@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".presentation.MainActivity">
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linMainCitySelect"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
+        android:elevation="0dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingHorizontal="8dp">
+        android:paddingHorizontal="8dp"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvMainCitySelect"
@@ -24,6 +29,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_spinner_cities"
             android:drawableEnd="@drawable/ic_arrow_drop_down"
+            android:elevation="0dp"
             android:gravity="center_vertical|start"
             android:layoutDirection="ltr"
             android:paddingHorizontal="8dp"
@@ -31,7 +37,8 @@
             android:textAlignment="viewStart"
             android:textColor="@color/black"
             android:textDirection="ltr"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:elevation="0dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnMainCitySearch"
@@ -39,30 +46,77 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="@drawable/bg_button_search"
+            android:elevation="0dp"
             android:text="@string/search"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorAccent"
+            app:elevation="0dp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMainForecastCached"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/take_care_that_the_viewed_data_is_cached_not_the_real_data"
+        android:textColor="@android:color/holo_orange_dark"
+        android:visibility="gone"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linMainCitySelect"
+        app:layout_constraintVertical_bias="0" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMainForecastData"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:elevation="0dp"
         android:orientation="vertical"
         android:padding="8dp"
+        app:elevation="0dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/btnMainForecastRetry"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvMainForecastCached"
         app:spanCount="2"
-        tools:listitem="@layout/forecast_item" />
+        tools:listitem="@layout/forecasts_item" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvMainForecastError"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:elevation="0dp"
         android:gravity="center"
         android:padding="16dp"
         android:text="@string/error_fetching_data_please_retry"
         android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/btnMainForecastRetry"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvMainForecastCached" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMainForecastSearch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/click_search_to_get_forecast"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/btnMainForecastRetry"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvMainForecastCached" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnMainForecastRetry"
@@ -70,7 +124,34 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/bg_button_search"
+        android:elevation="0dp"
         android:text="@string/retry"
         android:textColor="@color/colorAccent"
-        android:visibility="gone" />
-</androidx.appcompat.widget.LinearLayoutCompat>
+        android:visibility="gone"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linMainForecastLoader"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:elevation="2dp"
+        android:gravity="center"
+        android:visibility="gone"
+        app:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/pbMainForecastLoader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>

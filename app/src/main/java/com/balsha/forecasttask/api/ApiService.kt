@@ -10,6 +10,7 @@ interface ApiService {
     suspend fun getForecast(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("appid") appId: String = BuildConfig.APP_ID
+        @Query("appid") appId: String = BuildConfig.APP_ID,
+        @Query("units") units: String = "metric"
     ): ForecastResponse
 }
