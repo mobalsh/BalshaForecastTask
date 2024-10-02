@@ -7,9 +7,11 @@ import com.balsha.forecasttask.data.database.ForecastDao
 import com.balsha.forecasttask.data.database.ForecastDatabase
 import com.balsha.forecasttask.data.repository.MainRepository
 import com.balsha.forecasttask.data.repository.MainRepositoryImpl
-import com.balsha.forecasttask.domain.usecase.AddForecastToDBUseCase
-import com.balsha.forecasttask.domain.usecase.GetForecastFromApiUseCase
-import com.balsha.forecasttask.domain.usecase.GetForecastFromDBUseCase
+import com.balsha.forecasttask.domain.usecase.cities.AddCitiesToDBUseCase
+import com.balsha.forecasttask.domain.usecase.cities.GetCitiesFromDBUseCase
+import com.balsha.forecasttask.domain.usecase.forcasts.AddForecastToDBUseCase
+import com.balsha.forecasttask.domain.usecase.forcasts.GetForecastFromApiUseCase
+import com.balsha.forecasttask.domain.usecase.forcasts.GetForecastFromDBUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,5 +59,17 @@ object AppModule {
     @Singleton
     fun provideAddForecastToDBUseCase(mainRepository: MainRepository): AddForecastToDBUseCase {
         return AddForecastToDBUseCase(mainRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCitiesFromDBUseCase(mainRepository: MainRepository): GetCitiesFromDBUseCase {
+        return GetCitiesFromDBUseCase(mainRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddCitiesToDBUseCase(mainRepository: MainRepository): AddCitiesToDBUseCase {
+        return AddCitiesToDBUseCase(mainRepository)
     }
 }

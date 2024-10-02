@@ -1,4 +1,4 @@
-package com.balsha.forecasttask.domain.usecase
+package com.balsha.forecasttask.domain.usecase.forcasts
 
 import com.balsha.forecasttask.data.model.forecast.ForecastResponse
 import com.balsha.forecasttask.data.repository.MainRepository

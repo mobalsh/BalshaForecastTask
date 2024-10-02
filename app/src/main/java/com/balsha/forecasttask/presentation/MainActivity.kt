@@ -1,6 +1,8 @@
 package com.balsha.forecasttask.presentation
 
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -8,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.balsha.forecasttask.R
-import com.balsha.forecasttask.data.model.city.CitiesResponse
 import com.balsha.forecasttask.data.model.city.CityModel
 import com.balsha.forecasttask.databinding.ActivityMainBinding
 import com.balsha.forecasttask.presentation.adapters.CitiesAdapter
@@ -30,7 +31,9 @@ class MainActivity : AppCompatActivity() {
 
     private var mCitiesDialog: SelectCityDialog? = null
 
-    private var mSelectedCity = CityModel()
+    private var mSelectedCity: CityModel? = null
+
+    private var mLastAPI = "cities"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,17 @@ class MainActivity : AppCompatActivity() {
 
         mCitiesDialog = SelectCityDialog(mContext)
 
+        mBinding.btnMainForecastRetry.setOnClickListener {
+            if (mLastAPI == "cities") mMainViewModel.fetchCities()
+            else {
+                if (mSelectedCity != null) mMainViewModel.getForecast(
+                    mSelectedCity!!.id, mSelectedCity!!.lat, mSelectedCity!!.lon
+                ) else Toast.makeText(
+                    mContext, getString(R.string.please_select_city_first), Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         observeGetCities()
         observeGetForecast()
     }
@@ -55,19 +69,44 @@ class MainActivity : AppCompatActivity() {
         mMainViewModel.citiesState.observe(mContext) { response ->
             when (response) {
                 is CitiesDataState.Loading -> {
+                    showHideProgress(isHidden = true)
                 }
 
                 is CitiesDataState.Success -> {
-                    setupSpinner(response.data)
+                    showHideProgress(isHidden = false)
+
+                    setupSpinner(response.data.cities)
+
+                    mBinding.linMainCitySelect.visibility = VISIBLE
+                    mBinding.tvMainForecastCached.visibility = GONE
+                    mBinding.rvMainForecastData.visibility = GONE
+                    mBinding.tvMainForecastError.visibility = GONE
+                    mBinding.tvMainForecastSearch.visibility = VISIBLE
+                    mBinding.btnMainForecastRetry.visibility = GONE
                 }
 
                 is CitiesDataState.Cached -> {
+                    showHideProgress(isHidden = false)
+
+                    setupSpinner(response.data)
+
+                    mBinding.linMainCitySelect.visibility = VISIBLE
+                    mBinding.tvMainForecastCached.visibility = GONE
+                    mBinding.rvMainForecastData.visibility = GONE
+                    mBinding.tvMainForecastError.visibility = GONE
+                    mBinding.tvMainForecastSearch.visibility = VISIBLE
+                    mBinding.btnMainForecastRetry.visibility = GONE
                 }
 
                 is CitiesDataState.Error -> {
-                    Toast.makeText(
-                        mContext, "Forecast Error: ${response.message}", Toast.LENGTH_SHORT
-                    ).show()
+                    showHideProgress(isHidden = false)
+
+                    mBinding.linMainCitySelect.visibility = GONE
+                    mBinding.tvMainForecastCached.visibility = GONE
+                    mBinding.rvMainForecastData.visibility = GONE
+                    mBinding.tvMainForecastError.visibility = VISIBLE
+                    mBinding.tvMainForecastSearch.visibility = GONE
+                    mBinding.btnMainForecastRetry.visibility = VISIBLE
                 }
             }
         }
@@ -77,49 +116,75 @@ class MainActivity : AppCompatActivity() {
         mMainViewModel.forecastState.observe(mContext) { response ->
             when (response) {
                 is ForecastsDataState.Loading -> {
+                    showHideProgress(isHidden = true)
                 }
 
                 is ForecastsDataState.Success -> {
+                    showHideProgress(isHidden = false)
+
                     val forecasts = response.data.list
                     val adapter = ForecastsAdapter()
                     adapter.setItems(forecasts)
                     mBinding.rvMainForecastData.adapter = adapter
+
+                    mBinding.linMainCitySelect.visibility = VISIBLE
+                    mBinding.tvMainForecastCached.visibility = GONE
+                    mBinding.rvMainForecastData.visibility = VISIBLE
+                    mBinding.tvMainForecastError.visibility = GONE
+                    mBinding.tvMainForecastSearch.visibility = GONE
+                    mBinding.btnMainForecastRetry.visibility = GONE
                 }
 
                 is ForecastsDataState.Cached -> {
+                    showHideProgress(isHidden = false)
+
                     val forecasts = response.data
                     val adapter = ForecastsAdapter()
                     adapter.setItems(forecasts)
                     mBinding.rvMainForecastData.adapter = adapter
+
+                    mBinding.linMainCitySelect.visibility = VISIBLE
+                    mBinding.tvMainForecastCached.visibility = VISIBLE
+                    mBinding.rvMainForecastData.visibility = VISIBLE
+                    mBinding.tvMainForecastError.visibility = GONE
+                    mBinding.tvMainForecastSearch.visibility = GONE
+                    mBinding.btnMainForecastRetry.visibility = GONE
                 }
 
                 is ForecastsDataState.Error -> {
-                    Toast.makeText(
-                        mContext, "Forecast Error: ${response.message}", Toast.LENGTH_SHORT
-                    ).show()
+                    showHideProgress(isHidden = false)
+
+                    mBinding.linMainCitySelect.visibility = VISIBLE
+                    mBinding.tvMainForecastCached.visibility = GONE
+                    mBinding.rvMainForecastData.visibility = GONE
+                    mBinding.tvMainForecastError.visibility = VISIBLE
+                    mBinding.tvMainForecastSearch.visibility = GONE
+                    mBinding.btnMainForecastRetry.visibility = VISIBLE
                 }
             }
         }
     }
 
-    private fun setupSpinner(citiesResponse: CitiesResponse) {
+    private fun setupSpinner(cities: List<CityModel>) {
         val citiesName = arrayListOf(
             CityModel(
                 id = -1, cityNameAr = "اختر مدينة", cityNameEn = "Select city", lat = 0.0, lon = 0.0
             )
         )
-        citiesName.addAll(citiesResponse.cities)
+        citiesName.addAll(cities)
 
         if (mCitiesDialog != null) {
             mCitiesDialog?.setItems(citiesName)
 
             mCitiesDialog?.setOnCitySelectedListener(object : CitiesAdapter.IOnCitySelected {
                 override fun setOnCitySelected(position: Int) {
-                    mSelectedCity = citiesName[position]
+                    if (position > 0) {
+                        mSelectedCity = citiesName[position]
 
-                    val lang = Locale.getDefault().language
-                    mBinding.tvMainCitySelect.text =
-                        if (lang == "en") mSelectedCity.cityNameEn else mSelectedCity.cityNameAr
+                        val lang = Locale.getDefault().language
+                        mBinding.tvMainCitySelect.text =
+                            if (lang == "en") mSelectedCity?.cityNameEn else mSelectedCity?.cityNameAr
+                    }
                 }
             })
 
@@ -127,11 +192,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         mBinding.btnMainCitySearch.setOnClickListener {
-            fetchWeatherData(mSelectedCity)
+            mLastAPI = "forecasts"
+            if (mSelectedCity == null) Toast.makeText(
+                mContext, getString(R.string.please_select_city_first), Toast.LENGTH_SHORT
+            ).show()
+            else fetchWeatherData(mSelectedCity!!)
         }
     }
 
     private fun fetchWeatherData(city: CityModel) {
-        mMainViewModel.getForecast(city.lat, city.lon)
+        mMainViewModel.getForecast(city.id, city.lat, city.lon)
+    }
+
+    private fun showHideProgress(isHidden: Boolean) {
+        mBinding.linMainForecastLoader.visibility = VISIBLE.takeIf { isHidden } ?: GONE
+        mBinding.pbMainForecastLoader.visibility = VISIBLE.takeIf { isHidden } ?: GONE
     }
 }

@@ -7,4 +7,7 @@
     <string name="date">Date:</string>
     <string name="high_low">High/Low:</string>
     <string name="submit">Submit</string>
+    <string name="take_care_that_the_viewed_data_is_cached_not_the_real_data">Take care that the viewed data is cached, not the real data.</string>
+    <string name="click_search_to_get_forecast">Click search to get forecast</string>
+    <string name="please_select_city_first">Please, select city first</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.balsha.forecasttask.data.database
+package com.balsha.forecasttask.data.database.converters
 
 import androidx.room.TypeConverter
 import com.balsha.forecasttask.data.model.forecast.ForecastModel

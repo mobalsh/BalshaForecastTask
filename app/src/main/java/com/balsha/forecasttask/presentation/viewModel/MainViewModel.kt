@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.balsha.forecasttask.data.model.city.CitiesResponse
-import com.balsha.forecasttask.domain.usecase.AddForecastToDBUseCase
-import com.balsha.forecasttask.domain.usecase.GetForecastFromApiUseCase
-import com.balsha.forecasttask.domain.usecase.GetForecastFromDBUseCase
+import com.balsha.forecasttask.domain.usecase.cities.AddCitiesToDBUseCase
+import com.balsha.forecasttask.domain.usecase.cities.GetCitiesFromDBUseCase
+import com.balsha.forecasttask.domain.usecase.forcasts.AddForecastToDBUseCase
+import com.balsha.forecasttask.domain.usecase.forcasts.GetForecastFromApiUseCase
+import com.balsha.forecasttask.domain.usecase.forcasts.GetForecastFromDBUseCase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,11 +26,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val getCitiesFromDBUseCase: GetCitiesFromDBUseCase,
+    private val addCitiesToDBUseCase: AddCitiesToDBUseCase,
     private val getForecastUseCase: GetForecastFromApiUseCase,
     private val getForecastFromDBUseCase: GetForecastFromDBUseCase,
     private val addForecastToDBUseCase: AddForecastToDBUseCase
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _citiesState = MutableLiveData<CitiesDataState>()
     val citiesState: LiveData<CitiesDataState> = _citiesState
@@ -40,7 +43,7 @@ class MainViewModel @Inject constructor(
         fetchCities()
     }
 
-    private fun fetchCities() {
+    fun fetchCities() {
         viewModelScope.launch {
             _citiesState.value = CitiesDataState.Loading
 
@@ -60,16 +63,31 @@ class MainViewModel @Inject constructor(
                     response
                 }
 
-                _citiesState.value = CitiesDataState.Success(citiesResponse)
+                if (citiesResponse.cities.isNotEmpty()) {
+                    _citiesState.value = CitiesDataState.Success(citiesResponse)
+                    addCitiesToDBUseCase.execute(citiesResponse.cities)
+                } else {
+                    val cachedCities = withContext(Dispatchers.IO) {
+                        getCitiesFromDBUseCase.execute()
+                    }
+                    if (cachedCities.isNotEmpty())
+                        _citiesState.value = CitiesDataState.Cached(cachedCities)
+                    else _citiesState.value = CitiesDataState.Error("Error")
+                }
 
             } catch (e: IOException) {
                 e.printStackTrace()
-                _citiesState.value = CitiesDataState.Error("Error")
+                val cachedCities = withContext(Dispatchers.IO) {
+                    getCitiesFromDBUseCase.execute()
+                }
+                if (cachedCities.isNotEmpty())
+                    _citiesState.value = CitiesDataState.Cached(cachedCities)
+                else _citiesState.value = CitiesDataState.Error("Error")
             }
         }
     }
 
-    fun getForecast(lat: Double, lon: Double) {
+    fun getForecast(cityId: Int, lat: Double, lon: Double) {
         viewModelScope.launch {
             _forecastState.value = ForecastsDataState.Loading
             try {
@@ -78,14 +96,17 @@ class MainViewModel @Inject constructor(
                 }
                 if (forecastResponse.cod == 200) {
                     _forecastState.value = ForecastsDataState.Success(forecastResponse)
+                    forecastResponse.list.forEach { it.cityId = cityId }
                     addForecastToDBUseCase.execute(forecastResponse.list)
                 } else {
                     val cachedForecast = withContext(Dispatchers.IO) {
                         getForecastFromDBUseCase.execute()
                     }
-                    if (cachedForecast.isNotEmpty())
-                        _forecastState.value = ForecastsDataState.Cached(cachedForecast)
-                    else _forecastState.value = ForecastsDataState.Error(forecastResponse.message)
+                    if (cachedForecast.isNotEmpty()) {
+                        if (cachedForecast.first().cityId == cityId)
+                            _forecastState.value = ForecastsDataState.Cached(cachedForecast)
+                        else _forecastState.value = ForecastsDataState.Error("Error")
+                    } else _forecastState.value = ForecastsDataState.Error(forecastResponse.message)
                 }
             } catch (e: HttpException) {
                 if (e.code() == 401) {
@@ -96,18 +117,22 @@ class MainViewModel @Inject constructor(
                     val cachedForecast = withContext(Dispatchers.IO) {
                         getForecastFromDBUseCase.execute()
                     }
-                    if (cachedForecast.isNotEmpty())
-                        _forecastState.value = ForecastsDataState.Cached(cachedForecast)
-                    else _forecastState.value = ForecastsDataState.Error("Error")
+                    if (cachedForecast.isNotEmpty()) {
+                        if (cachedForecast.first().cityId == cityId)
+                            _forecastState.value = ForecastsDataState.Cached(cachedForecast)
+                        else _forecastState.value = ForecastsDataState.Error("Error")
+                    } else _forecastState.value = ForecastsDataState.Error("Error")
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
                 val cachedForecast = withContext(Dispatchers.IO) {
                     getForecastFromDBUseCase.execute()
                 }
-                if (cachedForecast.isNotEmpty())
-                    _forecastState.value = ForecastsDataState.Cached(cachedForecast)
-                else _forecastState.value = ForecastsDataState.Error("Error")
+                if (cachedForecast.isNotEmpty()) {
+                    if (cachedForecast.first().cityId == cityId)
+                        _forecastState.value = ForecastsDataState.Cached(cachedForecast)
+                    else _forecastState.value = ForecastsDataState.Error("Error")
+                } else _forecastState.value = ForecastsDataState.Error("Error")
             }
         }
     }

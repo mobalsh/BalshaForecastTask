@@ -21,5 +21,6 @@ data class ForecastModel(
     val pop: Float,
     val sys: Sys,
     @SerializedName("dt_txt")
-    val dateText: String
+    val dateText: String,
+    var cityId: Int = 1
 ) : Parcelable
