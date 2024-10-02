@@ -69,7 +69,7 @@ RELEASE_IMAGES_URL=https://openweathermap.org/img/wn/
 
 #APP_ID
 
-APP_ID=YOUR_APP_ID
+APP_ID=YOUR_APP_ID_HERE
 
 5. Sync the Gradle files to download the dependencies.
 
