@@ -36,7 +36,7 @@
 3. Add your OpenWeatherMap API key in the appropriate place in the code.
 
 4. You need to add this in the local.properties file
-#
+(#
 #KEY_STORE
 RELEASE_STORE_PATH=PlayStore\\key.jks
 RELEASE_STORE_PASSWORD=123456
@@ -52,7 +52,7 @@ RELEASE_BASE_URL=https://api.openweathermap.org/data/2.5/
 RELEASE_IMAGES_URL=https://openweathermap.org/img/wn/
 #
 #MAP_KEY
-APP_ID=7e1234faab3c6df6b46fe7c50fcef080
+APP_ID=7e1234faab3c6df6b46fe7c50fcef080)
 
 5. Sync the Gradle files to download the dependencies.
 
