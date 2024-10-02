@@ -1,7 +1,6 @@
 package com.balsha.forecasttask.data.database.converters
 
 import androidx.room.TypeConverter
-import com.balsha.forecasttask.data.model.city.CityModel
 import com.balsha.forecasttask.data.model.forecast.Coordinates
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
