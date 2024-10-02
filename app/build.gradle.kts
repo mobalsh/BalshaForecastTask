@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt)
 
+    id("com.google.gms.google-services")
+
     id("com.google.devtools.ksp")
 
     kotlin("kapt")
@@ -94,6 +96,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)

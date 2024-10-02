@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "880005345590",
+    "project_id": "balshaforecasttask",
+    "storage_bucket": "balshaforecasttask.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880005345590:android:64e0e3845ffffaf65c0397",
+        "android_client_info": {
+          "package_name": "com.balsha.forecasttask"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6OKZ87TR0NzTxWtzg1VB9zSmjsvVW7DA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
